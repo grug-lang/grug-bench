@@ -1,0 +1,30 @@
+{
+	"entities": {
+		"Bench": {
+			"on_functions": {
+				"on_print": {
+					"arguments": [ ]
+				},
+				"on_increment": {
+					"arguments": [ ]
+				}
+			}
+		}
+	},
+	"game_functions": {
+		"print_number": {
+			"arguments": [
+				{
+					"name": "i",
+					"type": "number"
+				}
+			]
+		},
+		"get_1": {
+			"return_type": "number",
+			"arguments": [ ]
+		}
+	}
+}
+				
+

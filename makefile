@@ -13,7 +13,7 @@ build: main.dll smoketest.exe
 main.dll: main.c main.h
 	$(CC) $(COMMON_FLAGS) main.c -o main.dll -g -shared -Wl,--subsystem,windows
 
-smoketest.exe: smoketest.c
+smoketest.exe: smoketest.c main.h
 	$(CC) $(COMMON_FLAGS) smoketest.c -o smoketest.exe -g 
 
 clean: 
