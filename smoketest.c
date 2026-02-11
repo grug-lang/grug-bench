@@ -35,14 +35,12 @@ void on_increment(void* state, double* entity_data) {
 
 /* vtable functions */
 void* create_grug_state(const char* mod_api_path, const char* mods_dir) {
-	printf("Creating state\n");
-	printf("mod_api.json: %s\n", mod_api_path);
-	printf("mods_dir: %s\n", mods_dir);
+	(void)(mod_api_path);
+	(void)(mods_dir);
 	return NULL;
 }
 
 void destroy_grug_state(void* state) {
-	printf("Destroying state\n");
 	(void)(state);
 }
 
@@ -111,6 +109,5 @@ int main () {
 		"./mods",
 		&vtable
 	);
-	printf("hello from smoketest.c");
 	return 0;
 }
