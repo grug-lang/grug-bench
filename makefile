@@ -1,5 +1,5 @@
 CC:= gcc
-COMMON_FLAGS := -Wall -Wextra -Werror -ggdb
+COMMON_FLAGS := -Wall -Wextra -Werror
 OPT_LEVEL := -O3
 
 run: build
@@ -12,7 +12,7 @@ check:
 build: bench.dll smoketest.exe
 
 bench.dll: bench.c bench.h
-	$(CC) $(COMMON_FLAGS) $(OPT_LEVEL) bench.c -o bench.dll -g -shared
+	$(CC) $(COMMON_FLAGS) $(OPT_LEVEL) bench.c -o bench.dll -g -shared -Wl,--out-implib,bench.lib -Wl,--subsystem=windows
 
 smoketest.exe: smoketest.c bench.h
 	$(CC) $(COMMON_FLAGS) $(OPT_LEVEL) smoketest.c -o smoketest.exe -g 

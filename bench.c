@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <assert.h>
-#include <profileapi.h>
 #include "bench.h"
 
 #ifdef WIN32
+#include <profileapi.h>
 static uint64_t get_timestamp_resolution() {
 	uint64_t resolution = 0;
 	QueryPerformanceFrequency((LARGE_INTEGER*)&resolution);
