@@ -2,7 +2,7 @@
 #include <libloaderapi.h>
 #include <assert.h>
 #include <string.h>
-#include "main.h"
+#include "bench.h"
 
 /* platform specific code */
 void* load_library(const char* path) {
@@ -84,7 +84,7 @@ void call_entity_on_fn(void* state, void* entity_data, void* on_fn_id) {
 /* vtable functions */
 
 int main () {
-	void* dll = load_library("main.dll");
+	void* dll = load_library("bench.dll");
 	if (!dll) {
 		fprintf(stderr, "could not open dll");
 		exit(1);

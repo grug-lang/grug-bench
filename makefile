@@ -1,21 +1,22 @@
 CC:= gcc
-COMMON_FLAGS := -Wall -Wextra -Werror
+COMMON_FLAGS := -Wall -Wextra -Werror -ggdb
+OPT_LEVEL := -O3
 
 run: build
 	./smoketest.exe
 
 check: 
-	$(CC) $(COMMON_FLAGS) main.c -fsyntax-only 
+	$(CC) $(COMMON_FLAGS) bench.c -fsyntax-only 
 	$(CC) $(COMMON_FLAGS) smoketest.c -fsyntax-only 
 
-build: main.dll smoketest.exe
+build: bench.dll smoketest.exe
 
-main.dll: main.c main.h
-	$(CC) $(COMMON_FLAGS) main.c -o main.dll -g -shared -Wl,--subsystem,windows
+bench.dll: bench.c bench.h
+	$(CC) $(COMMON_FLAGS) $(OPT_LEVEL) bench.c -o bench.dll -g -shared
 
-smoketest.exe: smoketest.c main.h
-	$(CC) $(COMMON_FLAGS) smoketest.c -o smoketest.exe -g 
+smoketest.exe: smoketest.c bench.h
+	$(CC) $(COMMON_FLAGS) $(OPT_LEVEL) smoketest.c -o smoketest.exe -g 
 
 clean: 
 	del smoketest.exe
-	del main.dll
+	del bench.dll

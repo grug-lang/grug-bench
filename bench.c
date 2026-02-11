@@ -1,6 +1,21 @@
 #include <stdio.h>
 #include <assert.h>
-#include "main.h"
+#include <profileapi.h>
+#include "bench.h"
+
+#ifdef WIN32
+static uint64_t get_timestamp_resolution() {
+	uint64_t resolution = 0;
+	QueryPerformanceFrequency((LARGE_INTEGER*)&resolution);
+	return resolution;
+}
+
+static uint64_t get_timestamp() {
+	uint64_t time_stamp = 0;
+	QueryPerformanceCounter((LARGE_INTEGER*)&time_stamp);
+	return time_stamp;
+}
+#endif /* WIN32 */
 
 static double print_value = 0;
 void game_fn_print_number(void* state, union grug_value* arguments) {
@@ -45,22 +60,22 @@ void grug_bench_run(
 	assert(print_value == 1.0);
 	assert(get_1_call_count == 1);
 
+	uint64_t start_time = get_timestamp();
 	// run 1B times; 
 	for (size_t i = 0; i < 1000 * 1000 * 1000; i++) {
 		grug_state_vtable->call_entity_on_fn(state, entity, incr_fn_id);
 	}
+	uint64_t end_time = get_timestamp();
+	uint64_t resolution = get_timestamp_resolution();
 
 	grug_state_vtable->call_entity_on_fn(state, entity, prnt_fn_id);
 	assert(print_value == 1000 * 1000 * 1000 + 1);
 	assert(get_1_call_count == 1000 * 1000 * 1000 + 1);
 
+	printf("time taken: %lf seconds\n", ((double)(end_time) - (double)(start_time)) / (double)(resolution));
+	
 	grug_state_vtable->destroy_entity(state, entity);
 	grug_state_vtable->destroy_grug_state(state);
 	
 	return;
 }
-
-/* static void runtime_error_handler(const char *reason, enum grug_runtime_error_type type, const char *on_fn_name, const char *on_fn_path) { */
-/* 	(void)type; */
-/* 	fprintf(stderr, "grug runtime error in %s(): %s, in %s\n", on_fn_name, reason, on_fn_path); */
-/* } */
