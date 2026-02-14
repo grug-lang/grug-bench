@@ -33,9 +33,3 @@ path, mods directory path, and a vtable for `grug_state`. `grug_bench_run` will
 3. create an entity from that grug file
 4. call that entity's `on_increment` 1 billion times
 5. print the time taken to do the increments
-
-# disclaimer
-This repository has only been tested on windows. It likely will not compile on
-other platforms. The makefile especially is highly platform dependent. Any help
-in porting this to other platforms is appreciated
-
