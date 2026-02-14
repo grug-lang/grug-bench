@@ -1,9 +1,10 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <assert.h>
 #include "bench.h"
 
-#ifdef WIN32
-#include <profileapi.h>
+#if defined(_WIN32)
+#include <windows.h>
 static uint64_t get_timestamp_resolution() {
 	uint64_t resolution = 0;
 	QueryPerformanceFrequency((LARGE_INTEGER*)&resolution);
@@ -15,7 +16,19 @@ static uint64_t get_timestamp() {
 	QueryPerformanceCounter((LARGE_INTEGER*)&time_stamp);
 	return time_stamp;
 }
-#endif /* WIN32 */
+#elif defined(__linux__) /* end WIN32 */
+#include <time.h>
+#define BIL(n) ((n) * 1000 * 1000 * 1000)
+static uint64_t get_timestamp_resolution() {
+	return BIL(1);
+}
+
+static uint64_t get_timestamp() {
+	struct timespec time = {0};
+	clock_gettime(CLOCK_MONOTONIC_RAW, &time);
+	return (uint64_t)(time.tv_sec * BIL(1)) + (uint32_t)(time.tv_nsec);
+}
+#endif /* linux */
 
 static double print_value = 0;
 void game_fn_print_number(void* state, union grug_value* arguments) {
@@ -53,6 +66,9 @@ void grug_bench_run(
 
 	void* file = grug_state_vtable->compile_grug_file(state, "bench/basic-Bench.grug");
 	void* entity = grug_state_vtable->create_entity(state, file);
+	
+	printf("Running on function test\n");
+	fflush(stdout);
 
 	// run both
 	grug_state_vtable->call_entity_on_fn(state, entity, incr_fn_id);

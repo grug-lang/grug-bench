@@ -1,17 +1,29 @@
+#include <stdlib.h>
 #include <stdio.h>
-#include <libloaderapi.h>
 #include <assert.h>
 #include <string.h>
 #include "bench.h"
 
 /* platform specific code */
+#if defined(_WIN32)
+#include <windows.h>
 void* load_library(const char* path) {
 	return LoadLibraryExA(path, NULL, 0);
 }
 
 void* load_symbol(void* dll, const char* proc_name) {
-	return GetProcAddress(dll, proc_name);
+	return (void*)GetProcAddress(dll, proc_name);
 }
+#elif defined(__linux__) /* end _WIN32 */
+#include <dlfcn.h>
+void* load_library(const char* path) {
+	return dlopen(path, RTLD_NOW);
+}
+
+void* load_symbol(void* dll, const char* proc_name) {
+	return (void*)dlsym(dll, proc_name);
+}
+#endif /* end __linux__ */
 /* platform specific code */
 
 /* game functions */
@@ -19,7 +31,7 @@ static void             (*game_fn_print_number)(void* state, union grug_value* a
 static union grug_value (*game_fn_get_1       )(void* state                             ) = {0};
 /* game functions */
 
-typedef typeof(&grug_bench_run) p_grug_bench_run;
+typedef __typeof__(&grug_bench_run) p_grug_bench_run;
 
 /* on functions */
 typedef void (*on_fn_ptr)(void* state, double* entity_data);
@@ -52,6 +64,7 @@ void* compile_grug_file(void* state, const char* file_path) {
 
 void* create_entity(void* state, void* grug_script_id) {
 	(void)state;
+	(void)(grug_script_id);
 	assert((size_t)grug_script_id == 1);
 	
 	double* entity_data = malloc(sizeof(double));
@@ -66,6 +79,7 @@ void destroy_entity(void* state, void* entity) {
 
 void* get_on_fn_id(void* state, const char* entity_type, const char* function_name) {
 	(void)(state);
+	(void)(entity_type);
 	assert(strcmp(entity_type, "Bench") == 0);
 	if (strcmp(function_name, "on_print") == 0) {
 		return (void*)on_print;
@@ -82,14 +96,17 @@ void call_entity_on_fn(void* state, void* entity_data, void* on_fn_id) {
 /* vtable functions */
 
 int main () {
-	void* dll = load_library("bench.dll");
+	void* dll;
+	(dll = load_library("bench.dll"))? (void)(0): 
+	(dll = load_library("libbench.dll"))? (void)(0): 
+	(dll = load_library("libbench.so"))? (void)(0): NULL;
 	if (!dll) {
-		fprintf(stderr, "could not open dll");
+		fprintf(stderr, "could not open dll\n");
 		exit(1);
 	}
-	p_grug_bench_run grug_bench_run = load_symbol(dll, "grug_bench_run"      );
-	game_fn_print_number            = load_symbol(dll, "game_fn_print_number");
-	game_fn_get_1                   = load_symbol(dll, "game_fn_get_1"       );
+	p_grug_bench_run grug_bench_run = (__typeof__(p_grug_bench_run    ))load_symbol(dll, "grug_bench_run"      );
+	game_fn_print_number            = (__typeof__(game_fn_print_number))load_symbol(dll, "game_fn_print_number");
+	game_fn_get_1                   = (__typeof__(game_fn_get_1       ))load_symbol(dll, "game_fn_get_1"       );
 	if (!(grug_bench_run && game_fn_print_number && game_fn_print_number)) {
 		fprintf(stderr, "could not load symbols\n");
 		return 1;
