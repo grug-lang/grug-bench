@@ -11,7 +11,7 @@ functions, but other benchmarks are also planned
 2. Compilation time
 3. grug execution time (for math)
 
-If you have more ideas for benchmarks, please create an issue at [](https://github.com/grug-lang/grug-bench/issues).
+If you have more ideas for benchmarks, please [create an issue](https://github.com/grug-lang/grug-bench/issues).
 
 # running the smoketest
 1. clone the git repository and `cd` into it.
