@@ -17,6 +17,7 @@ If you have more ideas for benchmarks, please [create an issue](https://github.c
 1. clone the git repository and `cd` into it.
 2. run `cmake -S . -B ./build`
 3. build with `cmake --build ./build`
+4. run `build/smoketest`
 
 # running the benchmark on your implementation
 
