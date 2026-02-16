@@ -1,19 +1,17 @@
-// clang -o nbody nbody.c -lm -g -O3 -march=native -ffast-math && ./nbody
-
 #include <math.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 
 #if defined(WIN32)
-#include <stdint.h>
 #include <windows.h>
-void sleep(int32_t micro_seconds) {
+void sleepy(int32_t micro_seconds) {
 	Sleep(micro_seconds / 1000);
 }
 #elif defined(__linux__) /* end WIN32 */
 #include <unistd.h>
-void sleep (uint64_t micro_seconds) {
+void sleepy(uint64_t micro_seconds) {
 	usleep(micro_seconds);
 }
 #endif /* __linux__ */
@@ -29,7 +27,7 @@ void sleep (uint64_t micro_seconds) {
 
 // Unicode blocks for density visualization
 const char *density_blocks[] = {"  ", "░░", "▒▒", "▓▓", "██"};
-const int NUM_BLOCKS = 5;
+#define NUM_BLOCKS (sizeof(density_blocks) / sizeof(density_blocks[0]))
 
 // Colorful ANSI palette
 const char *color_palette[] = {
@@ -59,18 +57,16 @@ void density_velocity_to_block_color(
 	const char **block, const char **color
 ) {
 	// Block based on particle count
-	int idx_block = (int)(n_particles);
+	size_t idx_block = n_particles;
 	if (idx_block >= NUM_BLOCKS)
 		idx_block = NUM_BLOCKS - 1;
 	if (n_particles > 0.0 && idx_block < 1)
 		idx_block = 1;
 
 	// Color based on speed sum (linear scale, clamp to palette)
-	int idx_color = (int)(speed_sum * COLOR_SCALE);
+	size_t idx_color = (size_t)(speed_sum * COLOR_SCALE);
 	if (idx_color >= NUM_COLOR_SHADES)
 		idx_color = NUM_COLOR_SHADES - 1;
-	if (idx_color < 0)
-		idx_color = 0;
 
 	*block = density_blocks[idx_block];
 	*color = color_palette[idx_color];
@@ -172,10 +168,9 @@ int main() {
 
 		printf("%s", buffer);
 		fflush(stdout);
-		sleep(1000000 / FPS);
+		sleepy(1000000 / FPS);
 	}
 
 	free(buffer);
 	free(particles);
-	return 0;
 }
