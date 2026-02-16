@@ -136,8 +136,8 @@ void run_fibonacci_test(
 		);
 		assert(print_value == calc_fib((double)i) && "mismatched output");
 		uint64_t end = get_timestamp();
-		// if the calculation takes more than 1 second
-		if (end - start > frequency) {
+		// if the calculation takes more than 10 ms
+		if (end - start > (frequency / 100)) {
 			printf("Maximum fibonacci number calculated within 1 second: %zu", i);
 			break;
 		}

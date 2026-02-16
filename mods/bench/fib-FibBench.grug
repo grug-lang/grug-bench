@@ -1,9 +1,14 @@
 on_fib(number: number) {
-    print_number(on_fib_helper(number))
+    print_number(helper_fib(number))
 }
 
-on_fib_helper(number: number) number {
-    return on_fib_helper(number - 2) + on_fib_helper(number - 1)
+helper_fib(number: number) number {
+    if number < 0 {
+        return 0
+    } else if number <= 2 {
+        return 1
+    }
+    return helper_fib(number - 2) + helper_fib(number - 1)
 }
 
 # on_fib(number: number) {
