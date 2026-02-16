@@ -19,7 +19,7 @@ typedef void (*destroy_grug_state_t)(void* state);
 typedef void* (*compile_grug_file_t)(void* state, const char* file_path);
 typedef void* (*create_entity_t)(void* state, void* grug_script_id);
 typedef void* (*get_on_fn_id_t)(void* state, const char* entity_type, const char* function_name);
-typedef void  (*call_entity_on_fn_t)(void* state, void* entity, void* on_fn_id);
+typedef void  (*call_entity_on_fn_t)(void* state, void* entity, void* on_fn_id, union grug_value* value, size_t values_len);
 typedef void  (*destroy_entity_t)(void* state, void* entity);
 
 struct grug_state_vtable {

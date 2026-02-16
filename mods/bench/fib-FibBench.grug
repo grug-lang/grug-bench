@@ -1,0 +1,25 @@
+on_fib(number: number) {
+    print_number(on_fib_helper(number))
+}
+
+on_fib_helper(number: number) number {
+    return on_fib_helper(number - 2) + on_fib_helper(number - 1)
+}
+
+# on_fib(number: number) {
+#     if number < 0 {
+#         print_number(0)
+#     } else if number <= 2 {
+#         print_number(1)
+#     } else {
+#         a: number = 1
+#         b: number = 1
+#         while number > 2 {
+#             temp: number = a + b;
+#             b = a;
+#             a = temp
+#             number = number - 1;
+#         }
+#         print_number(a)
+#     }
+# }

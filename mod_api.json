@@ -1,5 +1,17 @@
 {
 	"entities": {
+		"FibBench": {
+			"on_functions": {
+				"on_fib": {
+					"arguments": [
+						{
+							"name": "number",
+							"type": "number"
+						}
+					]
+				}
+			}
+		},
 		"Bench": {
 			"on_functions": {
 				"on_print": {
