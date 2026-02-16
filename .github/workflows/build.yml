@@ -1,0 +1,27 @@
+name: CI Build
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Configure
+      - run: cmake -S . -B build -G Ninja
+
+      # Build
+      - run: cmake --build build
+
+      # Run smoketest
+      - run: ./build/smoketest
+        shell: bash

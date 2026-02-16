@@ -1,5 +1,5 @@
-#ifndef MAIN_H
-#define MAIN_H
+#pragma once
+
 #include<stdint.h>
 
 enum grug_error_type {
@@ -39,4 +39,3 @@ void grug_bench_run(
 	const char* mods_dir,
 	struct grug_state_vtable* vtable
 );
-#endif /* MAIN_H */

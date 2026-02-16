@@ -11,12 +11,13 @@ functions, but other benchmarks are also planned
 2. Compilation time
 3. grug execution time (for math)
 
-If you have more ideas for benchmarks, please create an issue at [](https://github.com/grug-lang/grug-bench/issues).
+If you have more ideas for benchmarks, please [create an issue](https://github.com/grug-lang/grug-bench/issues).
 
 # running the smoketest
 1. clone the git repository and `cd` into it.
 2. run `cmake -S . -B ./build`
 3. build with `cmake --build ./build`
+4. run `build/smoketest`
 
 # running the benchmark on your implementation
 
@@ -32,9 +33,3 @@ path, mods directory path, and a vtable for `grug_state`. `grug_bench_run` will
 3. create an entity from that grug file
 4. call that entity's `on_increment` 1 billion times
 5. print the time taken to do the increments
-
-# disclaimer
-This repository has only been tested on windows. It likely will not compile on
-other platforms. The makefile especially is highly platform dependent. Any help
-in porting this to other platforms is appreciated
-
