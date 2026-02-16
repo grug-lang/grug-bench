@@ -33,3 +33,11 @@ path, mods directory path, and a vtable for `grug_state`. `grug_bench_run` will
 3. create an entity from that grug file
 4. call that entity's `on_increment` 1 billion times
 5. print the time taken to do the increments
+
+# N-body simulation benchmark
+
+The benchmark `nbody.c` performs a naive [N-body simulation](
+https://en.wikipedia.org/wiki/N-body_simulation) of 1000 grug
+`Particle` entities, printing to the terminal:
+
+<img src="./nbody.gif" width="250"/>
