@@ -17,8 +17,9 @@ If you have more ideas for benchmarks, please [create an issue](https://github.c
 # Running the smoketest
 
 1. Clone the git repository and `cd` into it.
-2. Run `cmake -S . -B ./build`
-3. Build and run with `cmake --build build --target run`
+2. Configure with `cmake -S . -B ./build`
+3. Build with `cmake --build build`
+4. Run with `build/smoketest`
 
 # Running the benchmark on your implementation
 
@@ -43,4 +44,12 @@ https://en.wikipedia.org/wiki/N-body_simulation) of 1000 grug
 
 <img src="./nbody.gif" width="250"/>
 
-Build and run with `cmake --build build --target nbody-run`.
+## Running
+
+Run with `build/nbody`.
+
+## Headless mode
+
+If you want to run the benchmark as fast as possible without any graphics, pass `--headless`.
+
+In headless mode, the benchmark stops after 10 seconds and prints the number of elapsed ticks.

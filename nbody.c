@@ -1,7 +1,9 @@
 #include <math.h>
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
 
 #if defined(WIN32)
@@ -58,26 +60,53 @@ void density_velocity_to_block_color(
 ) {
 	// Block based on particle count
 	size_t idx_block = n_particles;
-	if (idx_block >= NUM_BLOCKS)
-		idx_block = NUM_BLOCKS - 1;
-	if (n_particles > 0.0 && idx_block < 1)
-		idx_block = 1;
+	if (idx_block >= NUM_BLOCKS) idx_block = NUM_BLOCKS - 1;
+	if (n_particles > 0.0 && idx_block < 1) idx_block = 1;
 
 	// Color based on speed sum (linear scale, clamp to palette)
 	size_t idx_color = (size_t)(speed_sum * COLOR_SCALE);
-	if (idx_color >= NUM_COLOR_SHADES)
-		idx_color = NUM_COLOR_SHADES - 1;
+	if (idx_color >= NUM_COLOR_SHADES) idx_color = NUM_COLOR_SHADES - 1;
 
 	*block = density_blocks[idx_block];
 	*color = color_palette[idx_color];
 }
 
-int main() {
+void render_frame(double grid_count[HEIGHT][WIDTH], double grid_speed[HEIGHT][WIDTH], char *buffer, size_t buffer_size) {
+	printf("\033[H"); // Move cursor to top-left
+	char *p = buffer;
+	size_t remaining = buffer_size;
+	for (int y = 0; y < HEIGHT; y++) {
+		for (int x = 0; x < WIDTH; x++) {
+			const char *block, *color;
+			density_velocity_to_block_color(grid_count[y][x], grid_speed[y][x],
+											&block, &color);
+			int wrote = snprintf(p, remaining, "%s%s\033[0m", color, block);
+			if (wrote < 0 || (size_t)wrote >= remaining) break;
+			p += wrote;
+			remaining -= wrote;
+		}
+		int wrote = snprintf(p, remaining, "\n");
+		if (wrote < 0 || (size_t)wrote >= remaining) break;
+		p += wrote;
+		remaining -= wrote;
+	}
+	printf("%s", buffer);
+	fflush(stdout);
+}
+
+int main(int argc, char *argv[]) {
 	srand((unsigned)time(NULL));
 
+	bool headless = false;
+	for (int i = 1; i < argc; i++) {
+		if (strcmp(argv[i], "--headless") == 0) {
+			headless = true;
+			break;
+		}
+	}
+
 	Particle *particles = malloc(sizeof(Particle) * NUM_PARTICLES);
-	if (!particles)
-		return 1;
+	if (!particles) return 1;
 
 	for (int i = 0; i < NUM_PARTICLES; i++) {
 		particles[i].x = ((double)rand() / RAND_MAX) * WIDTH * SCALE;
@@ -89,15 +118,25 @@ int main() {
 		particles[i].mass = 1.0;
 	}
 
-	size_t buffer_size = HEIGHT * WIDTH * 32 + HEIGHT * 16;
-	char *buffer = malloc(buffer_size);
-	if (!buffer) {
-		free(particles);
-		return 1;
+	char *buffer = NULL;
+	size_t buffer_size = 0;
+	if (!headless) {
+		buffer_size = HEIGHT * WIDTH * 32 + HEIGHT * 16;
+		buffer = malloc(buffer_size);
+		if (!buffer) {
+			free(particles);
+			return 1;
+		}
 	}
 
+	double elapsed = 0.0;
+	size_t ticks = 0;
+	clock_t start_time, end_time;
+
 	while (1) {
-		printf("\033[H"); // move cursor to top-left
+		ticks++;
+
+		if (headless) start_time = clock();
 
 		double grid_count[HEIGHT][WIDTH] = {0};
 		double grid_speed[HEIGHT][WIDTH] = {0};
@@ -126,7 +165,7 @@ int main() {
 			}
 		}
 
-		// Update positions (no wrapping)
+		// Update positions
 		for (int i = 0; i < NUM_PARTICLES; i++) {
 			particles[i].vx += particles[i].ax;
 			particles[i].vy += particles[i].ay;
@@ -141,36 +180,24 @@ int main() {
 			if (gx >= 0 && gx < WIDTH && gy >= 0 && gy < HEIGHT) {
 				grid_count[gy][gx] += 1.0;
 				grid_speed[gy][gx] += sqrt(particles[i].vx * particles[i].vx +
-				                           particles[i].vy * particles[i].vy);
+										   particles[i].vy * particles[i].vy);
 			}
 		}
 
-		// Render frame
-		char *p = buffer;
-		size_t remaining = buffer_size;
-		for (int y = 0; y < HEIGHT; y++) {
-			for (int x = 0; x < WIDTH; x++) {
-				const char *block, *color;
-				density_velocity_to_block_color(grid_count[y][x], grid_speed[y][x],
-				                                &block, &color);
-				int wrote = snprintf(p, remaining, "%s%s\033[0m", color, block);
-				if (wrote < 0 || (size_t)wrote >= remaining)
-				  break;
-				p += wrote;
-				remaining -= wrote;
-			}
-			int wrote = snprintf(p, remaining, "\n");
-			if (wrote < 0 || (size_t)wrote >= remaining)
-				break;
-			p += wrote;
-			remaining -= wrote;
+		if (headless) {
+			end_time = clock();
+			elapsed += (double)(end_time - start_time) / CLOCKS_PER_SEC;
+			if (elapsed >= 10.0) break;
+		} else {
+			render_frame(grid_count, grid_speed, buffer, buffer_size);
+			sleepy(1000000 / FPS);
 		}
-
-		printf("%s", buffer);
-		fflush(stdout);
-		sleepy(1000000 / FPS);
 	}
 
-	free(buffer);
+	if (headless) {
+		printf("%zu\n", ticks);
+	}
+
+	if (!headless) free(buffer);
 	free(particles);
 }

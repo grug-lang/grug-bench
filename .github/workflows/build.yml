@@ -23,7 +23,7 @@ jobs:
       - run: cmake --build build
 
       # Run smoketest
-      - run: cmake --build build --target run
+      - run: build/smoketest
 
       # Run nbody benchmark
-      - run: cmake --build build --target nbody-run
+      - run: build/nbody --headless
