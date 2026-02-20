@@ -28,6 +28,11 @@ add_library(bench SHARED bench.c)
 # smoketest.exe
 # =========================
 add_executable(smoketest smoketest.c)
+add_executable(nbody nbody.c)
+
+if (NOT MSVC)
+    target_link_libraries(nbody PRIVATE m)
+endif()
 
 # Link smoketest with bench library
 target_link_libraries(smoketest PRIVATE bench)
@@ -36,4 +41,11 @@ target_link_libraries(smoketest PRIVATE bench)
 add_custom_target(run
     COMMAND smoketest
     DEPENDS smoketest
+    USES_TERMINAL
+)
+
+add_custom_target(nbody-run
+    COMMAND nbody
+    DEPENDS nbody
+    USES_TERMINAL
 )

@@ -6,9 +6,9 @@
 #if defined(_WIN32)
 #include <windows.h>
 static uint64_t get_timestamp_frequency() {
-	uint64_t resolution = 0;
-	QueryPerformanceFrequency((LARGE_INTEGER*)&resolution);
-	return resolution;
+	uint64_t frequency = 0;
+	QueryPerformanceFrequency((LARGE_INTEGER*)&frequency);
+	return frequency;
 }
 
 static uint64_t get_timestamp() {
@@ -19,7 +19,7 @@ static uint64_t get_timestamp() {
 #elif defined(__linux__) /* end WIN32 */
 #include <time.h>
 #define BIL(n) ((n) * 1000 * 1000 * 1000)
-static uint64_t get_timestamp_resolution() {
+static uint64_t get_timestamp_frequency() {
 	return BIL(1);
 }
 
