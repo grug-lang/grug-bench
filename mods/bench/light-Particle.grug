@@ -1,0 +1,48 @@
+g: number = 1.0
+min_dist: number = 0.5
+scale: number = 10
+
+a_x: number = 0
+a_y: number = 0
+
+v_x: number = 0
+v_y: number = 0
+
+on_tick(i: number, n: number) {
+    mass_i: number = get_mass(i)
+
+    x_i: number = x(i)
+    y_i: number = y(i)
+
+	a_x = 0
+	a_y = 0
+
+    j: number = 0
+    while j < n {
+		if j == i {
+			continue
+		}
+        mass_j: number = get_mass(j)
+
+        dx: number = (x(j) - x_i) / scale
+        dy: number = (y(j) - y_i) / scale
+
+        dist2: number = dx * dx + dy * dy + min_dist
+
+        invr: number = 1 / sqrt(dist2)
+        force: number = g * mass_i * mass_j * invr * invr
+
+        fx: number = force * dx * invr
+        fy: number = force * dy * invr
+
+        a_x = a_x + fx / mass_i
+        a_y = a_y + fy / mass_i
+
+        j = j + 1
+    }
+	v_x = v_x + a_x
+	v_y = v_y + a_y
+
+	add_x(i, v_x)
+	add_y(i, v_y)
+}
