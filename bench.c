@@ -62,7 +62,6 @@ static size_t               particles_len = 0   ;
 
 union grug_value game_fn_get_mass(void* state, union grug_value* values) {
 	(void)(state);
-	static size_t count = 0;
 
 	size_t index = (size_t)values[0].number;
 	if (index > particles_len) {
@@ -73,7 +72,6 @@ union grug_value game_fn_get_mass(void* state, union grug_value* values) {
 }
 union grug_value game_fn_x(void* state, union grug_value* values) {
 	(void)(state);
-	static size_t count = 0;
 
 	size_t index = (size_t)values[0].number;
 	if (index > particles_len) {
@@ -84,7 +82,6 @@ union grug_value game_fn_x(void* state, union grug_value* values) {
 }
 union grug_value game_fn_y(void* state, union grug_value* values) {
 	(void)(state);
-	static size_t count = 0;
 
 	size_t index = (size_t)values[0].number;
 	if (index > particles_len) {
@@ -95,7 +92,6 @@ union grug_value game_fn_y(void* state, union grug_value* values) {
 }
 void game_fn_set_x(void* state, union grug_value* values) {
 	(void)(state);
-	static size_t count = 0;
 
 	size_t index = (size_t)values[0].number;
 	double value = values[1].number;
@@ -107,7 +103,6 @@ void game_fn_set_x(void* state, union grug_value* values) {
 }
 void game_fn_set_y(void* state, union grug_value* values) {
 	(void)(state);
-	static size_t count = 0;
 
 	size_t index = (size_t)values[0].number;
 	double value = values[1].number;
@@ -119,7 +114,6 @@ void game_fn_set_y(void* state, union grug_value* values) {
 }
 union grug_value game_fn_sqrt(void* state, union grug_value* values) {
 	(void)(state);
-	static size_t count = 0;
 
 	double value = values[0].number;
 	return (union grug_value){.number = sqrt(value)};
