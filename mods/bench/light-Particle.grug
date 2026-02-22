@@ -10,15 +10,16 @@ v_y: number = 0
 on_tick(n: number) {
     my_mass: number = get_mass(my_index)
 
-    x_i: number = x(i)
-    y_i: number = y(i)
+    x_i: number = x(my_index)
+    y_i: number = y(my_index)
 
     a_x: number = 0
     a_y: number = 0
 
     j: number = 0
     while j < n {
-        if j == i {
+        if j == my_index {
+            j = j + 1
             continue
         }
         mass_j: number = get_mass(j)

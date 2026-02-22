@@ -78,8 +78,39 @@
 					"type": "number"
 				}
 			]
+		},
+		"set_x": {
+			"arguments": [
+				{
+					"name": "particle_index",
+					"type": "number"
+				},
+				{
+					"name": "x",
+					"type": "number"
+				}
+			]
+		},
+		"set_y": {
+			"arguments": [
+				{
+					"name": "particle_index",
+					"type": "number"
+				},
+				{
+					"name": "y",
+					"type": "number"
+				}
+			]
+		},
+		"sqrt": {
+			"return_type": "number",
+			"arguments": [
+				{
+					"name": "input",
+					"type": "number"
+				}
+			]
 		}
 	}
 }
-				
-

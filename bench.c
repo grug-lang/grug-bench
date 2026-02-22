@@ -238,7 +238,7 @@ void run_nbody_test(
 	void* file = grug_state_vtable->compile_grug_file(state, "bench/light-Particle.grug");
 	
 	assert(!particles);
-	particles_len = 1000;
+	particles_len = 100;
 	particles = malloc(sizeof(struct ParticleData) * particles_len);
 
 	void** entities = malloc(sizeof(void*) * particles_len);
@@ -276,7 +276,7 @@ void run_nbody_test(
 		counter += 1;
 	}
 
-	printf("number of iterations completed: %zu", counter);
+	printf("number of iterations completed: %zu\n", counter);
 
 	for (size_t i = 0; i < particles_len; i++) {
 		grug_state_vtable->destroy_entity(state, entities[i]);
