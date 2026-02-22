@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <math.h>
 #include "bench.h"
 
 #if defined(_WIN32)
@@ -30,6 +31,7 @@ static uint64_t get_timestamp() {
 }
 #endif /* linux */
 
+/* Game functions */
 static double print_value = 0;
 void game_fn_print_number(void* state, union grug_value* arguments) {
 	(void)(state);
@@ -42,6 +44,87 @@ union grug_value game_fn_get_1(void* state) {
 	get_1_call_count++;
 	return (union grug_value) {.number = 1.};
 }
+
+union grug_value game_fn_get_number(void* state) {
+	(void)(state);
+	static size_t count = 0;
+	return (union grug_value){.number = (double)(count++)};
+}
+
+struct ParticleData {
+	double mass;
+	double x;
+	double y;
+};
+
+static struct ParticleData* particles     = NULL;
+static size_t               particles_len = 0   ;
+
+union grug_value game_fn_get_mass(void* state, union grug_value* values) {
+	(void)(state);
+	static size_t count = 0;
+
+	size_t index = (size_t)values[0].number;
+	if (index > particles_len) {
+		printf("Particle index %zu out of bounds", index);
+		exit(1);
+	}
+	return (union grug_value){.number = particles[index].mass};
+}
+union grug_value game_fn_x(void* state, union grug_value* values) {
+	(void)(state);
+	static size_t count = 0;
+
+	size_t index = (size_t)values[0].number;
+	if (index > particles_len) {
+		printf("Particle index %zu out of bounds", index);
+		exit(1);
+	}
+	return (union grug_value){.number = particles[index].x};
+}
+union grug_value game_fn_y(void* state, union grug_value* values) {
+	(void)(state);
+	static size_t count = 0;
+
+	size_t index = (size_t)values[0].number;
+	if (index > particles_len) {
+		printf("Particle index %zu out of bounds", index);
+		exit(1);
+	}
+	return (union grug_value){.number = particles[index].y};
+}
+void game_fn_set_x(void* state, union grug_value* values) {
+	(void)(state);
+	static size_t count = 0;
+
+	size_t index = (size_t)values[0].number;
+	double value = values[1].number;
+	if (index > particles_len) {
+		printf("Particle index %zu out of bounds", index);
+		exit(1);
+	}
+	particles[index].x = value;
+}
+void game_fn_set_y(void* state, union grug_value* values) {
+	(void)(state);
+	static size_t count = 0;
+
+	size_t index = (size_t)values[0].number;
+	double value = values[1].number;
+	if (index > particles_len) {
+		printf("Particle index %zu out of bounds", index);
+		exit(1);
+	}
+	particles[index].y = value;
+}
+union grug_value game_fn_sqrt(void* state, union grug_value* values) {
+	(void)(state);
+	static size_t count = 0;
+
+	double value = values[0].number;
+	return (union grug_value){.number = sqrt(value)};
+}
+/* Game functions */
 
 void runtime_error_handler(
 	char const* reason, 
@@ -138,12 +221,70 @@ void run_fibonacci_test(
 		uint64_t end = get_timestamp();
 		// if the calculation takes more than 10 ms
 		if (end - start > (frequency / 100)) {
-			printf("Maximum fibonacci number calculated within 1 second: %zu", i);
+			printf("Maximum fibonacci number calculated within 1 second: %zu\n", i);
 			break;
 		}
 	}
 	
 	grug_state_vtable->destroy_entity(state, entity);
+}
+
+void run_nbody_test(
+	void* state,
+	struct grug_state_vtable* grug_state_vtable
+) {
+	void* on_tick_id = grug_state_vtable->get_on_fn_id(state, "Particle", "on_tick");
+
+	void* file = grug_state_vtable->compile_grug_file(state, "bench/light-Particle.grug");
+	
+	assert(!particles);
+	particles_len = 1000;
+	particles = malloc(sizeof(struct ParticleData) * particles_len);
+
+	void** entities = malloc(sizeof(void*) * particles_len);
+	
+	for (size_t i = 0; i < particles_len; i++) {
+		void* entity = grug_state_vtable->create_entity(state, file);
+		entities[i] = entity;
+		particles[i] = (struct ParticleData) {
+			.mass = (double)i,
+			.x    = (double)((i % 25) * 40),
+			.y    = (double)((i / 25) * 40),
+		};
+	}
+
+	printf("Running n body simulation\n");
+	fflush(stdout);
+
+	size_t counter = 0;
+
+	uint64_t frequency = get_timestamp_frequency();
+	uint64_t start = get_timestamp();
+	// run for a maximum of 1 second
+	while ((get_timestamp() - start) < (frequency)) {
+		for (size_t i = 0; i < particles_len; i++) {
+			grug_state_vtable->call_entity_on_fn(
+				state,
+				entities[i],
+				on_tick_id,
+				(union grug_value[]) {
+					{.number = (double)particles_len}
+				},
+				1
+			);
+		}
+		counter += 1;
+	}
+
+	printf("number of iterations completed: %zu", counter);
+
+	for (size_t i = 0; i < particles_len; i++) {
+		grug_state_vtable->destroy_entity(state, entities[i]);
+	}
+	free(entities);
+	free(particles);
+	particles = NULL;
+	particles_len = 0;
 }
 
 void grug_bench_run(
@@ -155,6 +296,7 @@ void grug_bench_run(
 
 	run_on_function_test(state, grug_state_vtable);
 	run_fibonacci_test(state, grug_state_vtable);
+	run_nbody_test(state, grug_state_vtable);
 
 	grug_state_vtable->destroy_grug_state(state);
 	return;

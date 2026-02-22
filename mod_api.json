@@ -21,6 +21,18 @@
 					"arguments": [ ]
 				}
 			}
+		},
+		"Particle": {
+			"on_functions": {
+				"on_tick": {
+					"arguments": [
+						{
+							"name": "n",
+							"type": "number"
+						}
+					]
+				}
+			}
 		}
 	},
 	"game_functions": {
@@ -35,6 +47,37 @@
 		"get_1": {
 			"return_type": "number",
 			"arguments": [ ]
+		},
+		"get_number": {
+			"return_type": "number",
+			"arguments": [ ]
+		},
+		"get_mass": {
+			"return_type": "number",
+			"arguments": [
+				{
+					"name": "particle_index",
+					"type": "number"
+				}
+			]
+		},
+		"x": {
+			"return_type": "number",
+			"arguments": [
+				{
+					"name": "particle_index",
+					"type": "number"
+				}
+			]
+		},
+		"y": {
+			"return_type": "number",
+			"arguments": [
+				{
+					"name": "particle_index",
+					"type": "number"
+				}
+			]
 		}
 	}
 }

@@ -2,26 +2,25 @@ g: number = 1.0
 min_dist: number = 0.5
 scale: number = 10
 
-a_x: number = 0
-a_y: number = 0
+my_index: number = get_number()
 
 v_x: number = 0
 v_y: number = 0
 
-on_tick(i: number, n: number) {
-    mass_i: number = get_mass(i)
+on_tick(n: number) {
+    my_mass: number = get_mass(my_index)
 
     x_i: number = x(i)
     y_i: number = y(i)
 
-	a_x = 0
-	a_y = 0
+    a_x: number = 0
+    a_y: number = 0
 
     j: number = 0
     while j < n {
-		if j == i {
-			continue
-		}
+        if j == i {
+            continue
+        }
         mass_j: number = get_mass(j)
 
         dx: number = (x(j) - x_i) / scale
@@ -30,19 +29,19 @@ on_tick(i: number, n: number) {
         dist2: number = dx * dx + dy * dy + min_dist
 
         invr: number = 1 / sqrt(dist2)
-        force: number = g * mass_i * mass_j * invr * invr
+        force: number = g * my_mass * mass_j / dist2
 
         fx: number = force * dx * invr
         fy: number = force * dy * invr
 
-        a_x = a_x + fx / mass_i
-        a_y = a_y + fy / mass_i
+        a_x = a_x + fx / my_mass
+        a_y = a_y + fy / my_mass
 
         j = j + 1
     }
-	v_x = v_x + a_x
-	v_y = v_y + a_y
+    v_x = v_x + a_x
+    v_y = v_y + a_y
 
-	add_x(i, v_x)
-	add_y(i, v_y)
+    set_x(my_index, x_i + v_x)
+    set_y(my_index, y_i + v_y)
 }

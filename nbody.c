@@ -59,7 +59,7 @@ void density_velocity_to_block_color(
 	const char **block, const char **color
 ) {
 	// Block based on particle count
-	size_t idx_block = n_particles;
+	size_t idx_block = (size_t)n_particles;
 	if (idx_block >= NUM_BLOCKS) idx_block = NUM_BLOCKS - 1;
 	if (n_particles > 0.0 && idx_block < 1) idx_block = 1;
 

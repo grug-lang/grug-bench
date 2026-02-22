@@ -29,9 +29,23 @@ void* load_symbol(void* dll, const char* proc_name) {
 /* game functions */
 static void             (*game_fn_print_number)(void* state, union grug_value* arguments) = {0};
 static union grug_value (*game_fn_get_1       )(void* state                             ) = {0};
+static union grug_value (*game_fn_get_mass    )(void* state, union grug_value* arguments) = {0};
+static union grug_value (*game_fn_get_number  )(void* state                             ) = {0};
+static union grug_value (*game_fn_x           )(void* state, union grug_value* arguments) = {0};
+static union grug_value (*game_fn_y           )(void* state, union grug_value* arguments) = {0};
+static union grug_value (*game_fn_sqrt        )(void* state, union grug_value* arguments) = {0};
+static void             (*game_fn_set_x       )(void* state, union grug_value* arguments) = {0};
+static void             (*game_fn_set_y       )(void* state, union grug_value* arguments) = {0};
 /* game functions */
 
 typedef __typeof__(&grug_bench_run) p_grug_bench_run;
+
+/* Entity data */
+struct ParticleData {
+	double index;
+	double v_x;
+	double v_y;
+};
 
 /* on functions */
 typedef void (*on_fn_ptr)(void* state, double* entity_data, union grug_value* values, size_t values_len);
@@ -78,6 +92,53 @@ void on_fib(void* state, double* entity_data, union grug_value* values, size_t v
 	/* 	game_fn_print_number(state, &(union grug_value) {.number = a}); */
 	/* } */
 }
+
+void on_tick(void* state, struct ParticleData* entity_data, union grug_value* values, size_t values_len) {
+	(void)(entity_data);
+	(void)(values);
+	(void)(values_len);
+	assert(values_len == 1);
+	double max_particles = values[0].number;
+
+	const double g = 1;
+	const double scale = 10;
+	const double min_dist = 0.5;
+	
+	double my_mass = game_fn_get_mass(state, &(union grug_value){.number = entity_data->index}).number;
+	
+	double x_i = game_fn_x(state, &(union grug_value){.number = entity_data->index}).number;
+	double y_i = game_fn_y(state, &(union grug_value){.number = entity_data->index}).number;
+
+	double a_x = 0;
+	double a_y = 0;
+
+	for (size_t j = 0; j < (size_t)max_particles; j++) {
+		if (j == entity_data->index) {
+			continue;
+		}
+		double j_mass = game_fn_get_mass(state, &(union grug_value){.number = (double)j}).number;
+
+		double dx = (game_fn_x(state, &(union grug_value){.number = (double)j}).number - x_i) / scale;
+		double dy = (game_fn_y(state, &(union grug_value){.number = (double)j}).number - y_i) / scale;
+
+		double dist2 = dx * dx + dy * dx + min_dist;
+		
+		double force = g * my_mass * j_mass / dist2;
+
+		double invr = 1 / game_fn_sqrt(state, &(union grug_value) {.number = dist2}).number;
+		double fx = force * dx * invr;
+		double fy = force * dy * invr;
+
+		a_x += a_x + fx / my_mass;
+		a_y += a_y + fy / my_mass;
+	}
+
+	entity_data->v_x += a_x;
+	entity_data->v_y += a_y;
+
+	game_fn_set_x(state, (union grug_value[]) {{.number = entity_data->index}, {.number = x_i + entity_data->v_x}});
+	game_fn_set_y(state, (union grug_value[]) {{.number = entity_data->index}, {.number = y_i + entity_data->v_y}});
+}
 /* on functions */
 
 /* vtable functions */
@@ -98,6 +159,8 @@ void* compile_grug_file(void* state, const char* file_path) {
 		return (void*)1;
 	} else if (strcmp(file_path, "bench/fib-FibBench.grug") == 0) {
 		return (void*)2;
+	} else if (strcmp(file_path, "bench/light-Particle.grug") == 0) {
+		return (void*)3;
 	}
 	exit(2);
 }
@@ -110,6 +173,14 @@ void* create_entity(void* state, void* grug_script_id) {
 		return entity_data;
 	} else if ((size_t)grug_script_id == 2) {
 		return NULL;
+	} else if ((size_t)grug_script_id == 3) {
+		struct ParticleData* data = malloc(sizeof(struct ParticleData));
+		*data = (struct ParticleData) {
+			.index = game_fn_get_number(state).number,
+			.v_x = 0,
+			.v_y = 0,
+		};
+		return data;
 	}
 	exit(2);
 }
@@ -136,6 +207,12 @@ void* get_on_fn_id(void* state, const char* entity_type, const char* function_na
 		} else {
 			return NULL;
 		}
+	} else if (strcmp(entity_type, "Particle") == 0) {
+		if (strcmp(function_name, "on_tick") == 0) {
+			return (void*)on_tick;
+		} else {
+			return NULL;
+		}
 	}
 	exit(2);
 }
@@ -157,6 +234,13 @@ int main () {
 	p_grug_bench_run grug_bench_run = (__typeof__(p_grug_bench_run    ))load_symbol(dll, "grug_bench_run"      );
 	game_fn_print_number            = (__typeof__(game_fn_print_number))load_symbol(dll, "game_fn_print_number");
 	game_fn_get_1                   = (__typeof__(game_fn_get_1       ))load_symbol(dll, "game_fn_get_1"       );
+	game_fn_get_mass                = (__typeof__(game_fn_get_mass    ))load_symbol(dll, "game_fn_get_mass"  );
+	game_fn_get_number              = (__typeof__(game_fn_get_number  ))load_symbol(dll, "game_fn_get_number"  );
+	game_fn_x                       = (__typeof__(game_fn_x           ))load_symbol(dll, "game_fn_x"           );
+	game_fn_y                       = (__typeof__(game_fn_y           ))load_symbol(dll, "game_fn_y"           );
+	game_fn_sqrt                    = (__typeof__(game_fn_sqrt        ))load_symbol(dll, "game_fn_sqrt"        );
+	game_fn_set_x                   = (__typeof__(game_fn_set_x       ))load_symbol(dll, "game_fn_set_x"       );
+	game_fn_set_y                   = (__typeof__(game_fn_set_y       ))load_symbol(dll, "game_fn_set_y"       );
 	if (!(grug_bench_run && game_fn_print_number && game_fn_print_number)) {
 		fprintf(stderr, "could not load symbols\n");
 		return 1;
