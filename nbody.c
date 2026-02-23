@@ -131,7 +131,7 @@ int main(int argc, char *argv[]) {
 
 	double elapsed = 0.0;
 	size_t ticks = 0;
-	clock_t start_time, end_time;
+	clock_t start_time = {0}, end_time;
 
 	while (1) {
 		ticks++;
