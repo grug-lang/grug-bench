@@ -32,6 +32,7 @@ add_executable(nbody nbody.c)
 
 if (NOT MSVC)
     target_link_libraries(nbody PRIVATE m)
+	target_link_libraries(bench PRIVATE m)
 endif()
 
 # Link smoketest with bench library
