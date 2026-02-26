@@ -253,7 +253,7 @@ int main () {
 		"./mod_api.json",
 		"./mods",
 		&vtable,
-		1
+		0
 	);
 	return 0;
 }
