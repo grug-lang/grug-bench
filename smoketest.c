@@ -34,8 +34,7 @@ static union grug_value (*game_fn_get_number  )(void* state                     
 static union grug_value (*game_fn_x           )(void* state, union grug_value* arguments) = {0};
 static union grug_value (*game_fn_y           )(void* state, union grug_value* arguments) = {0};
 static union grug_value (*game_fn_sqrt        )(void* state, union grug_value* arguments) = {0};
-static void             (*game_fn_set_x       )(void* state, union grug_value* arguments) = {0};
-static void             (*game_fn_set_y       )(void* state, union grug_value* arguments) = {0};
+static void             (*game_fn_set_acc     )(void* state, union grug_value* arguments) = {0};
 /* game functions */
 
 typedef __typeof__(&grug_bench_run) p_grug_bench_run;
@@ -43,8 +42,6 @@ typedef __typeof__(&grug_bench_run) p_grug_bench_run;
 /* Entity data */
 struct ParticleData {
 	double index;
-	double v_x;
-	double v_y;
 };
 
 /* on functions */
@@ -100,8 +97,8 @@ void on_tick(void* state, struct ParticleData* entity_data, union grug_value* va
 	assert(values_len == 1);
 	double max_particles = values[0].number;
 
-	const double g = 1;
-	const double scale = 10;
+	const double g = 10;
+	const double scale = 5;
 	const double min_dist = 0.5;
 	
 	double my_mass = game_fn_get_mass(state, &(union grug_value){.number = entity_data->index}).number;
@@ -121,7 +118,7 @@ void on_tick(void* state, struct ParticleData* entity_data, union grug_value* va
 		double dx = (game_fn_x(state, &(union grug_value){.number = (double)j}).number - x_i) / scale;
 		double dy = (game_fn_y(state, &(union grug_value){.number = (double)j}).number - y_i) / scale;
 
-		double dist2 = dx * dx + dy * dx + min_dist;
+		double dist2 = dx * dx + dy * dy + min_dist;
 		
 		double force = g * my_mass * j_mass / dist2;
 
@@ -129,15 +126,15 @@ void on_tick(void* state, struct ParticleData* entity_data, union grug_value* va
 		double fx = force * dx * invr;
 		double fy = force * dy * invr;
 
-		a_x += a_x + fx / my_mass;
-		a_y += a_y + fy / my_mass;
+		a_x += fx / my_mass;
+		a_y += fy / my_mass;
 	}
 
-	entity_data->v_x += a_x;
-	entity_data->v_y += a_y;
-
-	game_fn_set_x(state, (union grug_value[]) {{.number = entity_data->index}, {.number = x_i + entity_data->v_x}});
-	game_fn_set_y(state, (union grug_value[]) {{.number = entity_data->index}, {.number = y_i + entity_data->v_y}});
+	game_fn_set_acc(state, (union grug_value[]) {
+		{.number = entity_data->index},
+		{.number = a_x},
+		{.number = a_y}
+	});
 }
 /* on functions */
 
@@ -176,9 +173,7 @@ void* create_entity(void* state, void* grug_script_id) {
 	} else if ((size_t)grug_script_id == 3) {
 		struct ParticleData* data = malloc(sizeof(struct ParticleData));
 		*data = (struct ParticleData) {
-			.index = game_fn_get_number(state).number,
-			.v_x = 0,
-			.v_y = 0,
+			.index = game_fn_get_number(state).number
 		};
 		return data;
 	}
@@ -187,7 +182,7 @@ void* create_entity(void* state, void* grug_script_id) {
 
 void destroy_entity(void* state, void* entity) {
 	(void)state;
-	if (!entity) free(entity);
+	if (entity) free(entity);
 }
 
 void* get_on_fn_id(void* state, const char* entity_type, const char* function_name) {
@@ -239,8 +234,7 @@ int main () {
 	game_fn_x                       = (__typeof__(game_fn_x           ))load_symbol(dll, "game_fn_x"           );
 	game_fn_y                       = (__typeof__(game_fn_y           ))load_symbol(dll, "game_fn_y"           );
 	game_fn_sqrt                    = (__typeof__(game_fn_sqrt        ))load_symbol(dll, "game_fn_sqrt"        );
-	game_fn_set_x                   = (__typeof__(game_fn_set_x       ))load_symbol(dll, "game_fn_set_x"       );
-	game_fn_set_y                   = (__typeof__(game_fn_set_y       ))load_symbol(dll, "game_fn_set_y"       );
+	game_fn_set_acc                 = (__typeof__(game_fn_set_acc     ))load_symbol(dll, "game_fn_set_acc"       );
 	if (!(grug_bench_run && game_fn_print_number && game_fn_print_number)) {
 		fprintf(stderr, "could not load symbols\n");
 		return 1;

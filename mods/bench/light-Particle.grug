@@ -1,12 +1,8 @@
 g: number = 1.0
 min_dist: number = 0.5
-scale: number = 10
+scale: number = 5
 
 my_index: number = get_number()
-
-v_x: number = 0
-v_y: number = 0
-
 on_tick(n: number) {
     my_mass: number = get_mass(my_index)
 
@@ -40,9 +36,5 @@ on_tick(n: number) {
 
         j = j + 1
     }
-    v_x = v_x + a_x
-    v_y = v_y + a_y
-
-    set_x(my_index, x_i + v_x)
-    set_y(my_index, y_i + v_y)
+    set_acc(my_index, a_x, a_y)
 }

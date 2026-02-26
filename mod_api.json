@@ -24,6 +24,18 @@
 		},
 		"Particle": {
 			"on_functions": {
+				"on_set_velocity": {
+					"arguments": [
+						{
+							"name": "lv_x",
+							"type": "number"
+						},
+						{
+							"name": "lv_y",
+							"type": "number"
+						}
+					]
+				},
 				"on_tick": {
 					"arguments": [
 						{
@@ -79,26 +91,18 @@
 				}
 			]
 		},
-		"set_x": {
+		"add_acc": {
 			"arguments": [
 				{
 					"name": "particle_index",
 					"type": "number"
 				},
 				{
-					"name": "x",
-					"type": "number"
-				}
-			]
-		},
-		"set_y": {
-			"arguments": [
-				{
-					"name": "particle_index",
+					"name": "a_x",
 					"type": "number"
 				},
 				{
-					"name": "y",
+					"name": "a_y",
 					"type": "number"
 				}
 			]
