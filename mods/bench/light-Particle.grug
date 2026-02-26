@@ -3,6 +3,7 @@ min_dist: number = 0.5
 scale: number = 5
 
 my_index: number = get_number()
+
 on_tick(n: number) {
     my_mass: number = get_mass(my_index)
 

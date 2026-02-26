@@ -37,5 +37,6 @@ struct grug_state_vtable {
 void grug_bench_run(
 	const char* mod_api_path,
 	const char* mods_dir,
-	struct grug_state_vtable* vtable
+	struct grug_state_vtable* vtable,
+	_Bool headless
 );

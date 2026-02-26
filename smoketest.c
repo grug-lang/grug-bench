@@ -252,7 +252,8 @@ int main () {
 	grug_bench_run(
 		"./mod_api.json",
 		"./mods",
-		&vtable
+		&vtable,
+		1
 	);
 	return 0;
 }

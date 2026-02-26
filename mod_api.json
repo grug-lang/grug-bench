@@ -91,7 +91,7 @@
 				}
 			]
 		},
-		"add_acc": {
+		"set_acc": {
 			"arguments": [
 				{
 					"name": "particle_index",
