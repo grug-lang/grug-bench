@@ -27,14 +27,14 @@ void* load_symbol(void* dll, const char* proc_name) {
 /* platform specific code */
 
 /* game functions */
-static void             (*game_fn_print_number)(void* state, union grug_value* arguments) = {0};
-static union grug_value (*game_fn_get_1       )(void* state                             ) = {0};
-static union grug_value (*game_fn_get_mass    )(void* state, union grug_value* arguments) = {0};
-static union grug_value (*game_fn_get_number  )(void* state                             ) = {0};
-static union grug_value (*game_fn_x           )(void* state, union grug_value* arguments) = {0};
-static union grug_value (*game_fn_y           )(void* state, union grug_value* arguments) = {0};
-static union grug_value (*game_fn_sqrt        )(void* state, union grug_value* arguments) = {0};
-static void             (*game_fn_set_acc     )(void* state, union grug_value* arguments) = {0};
+static game_fn_ptr game_fn_print_number = {0};
+static game_fn_ptr game_fn_get_1        = {0};
+static game_fn_ptr game_fn_get_mass     = {0};
+static game_fn_ptr game_fn_get_number   = {0};
+static game_fn_ptr game_fn_x            = {0};
+static game_fn_ptr game_fn_y            = {0};
+static game_fn_ptr game_fn_sqrt         = {0};
+static game_fn_ptr game_fn_set_acc      = {0};
 /* game functions */
 
 typedef __typeof__(&grug_bench_run) p_grug_bench_run;
@@ -56,7 +56,7 @@ void on_print(void* state, double* entity_data, union grug_value* values, size_t
 void on_increment(void* state, double* entity_data, union grug_value* values, size_t values_len) {
 	(void)(values);
 	(void)(values_len);
-	*entity_data += game_fn_get_1(state).number;
+	*entity_data += game_fn_get_1(state, NULL).number;
 }
 
 double calc_fib(double i) {
@@ -173,7 +173,7 @@ void* create_entity(void* state, void* grug_script_id) {
 	} else if ((size_t)grug_script_id == 3) {
 		struct ParticleData* data = malloc(sizeof(struct ParticleData));
 		*data = (struct ParticleData) {
-			.index = game_fn_get_number(state).number
+			.index = game_fn_get_number(state, NULL).number
 		};
 		return data;
 	}

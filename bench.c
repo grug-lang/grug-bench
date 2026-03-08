@@ -33,20 +33,23 @@ static uint64_t get_timestamp() {
 
 /* Game functions */
 static double print_value = 0;
-void game_fn_print_number(void* state, union grug_value* arguments) {
+union grug_value game_fn_print_number(void* state, union grug_value* arguments) {
 	(void)(state);
 	print_value = arguments[0].number;
+	return (union grug_value) {0};
 }
 
 static double get_1_call_count = 0;
-union grug_value game_fn_get_1(void* state) {
+union grug_value game_fn_get_1(void* state, union grug_value* arguments) {
 	(void)(state);
+	(void)(arguments);
 	get_1_call_count++;
 	return (union grug_value) {.number = 1.};
 }
 
-union grug_value game_fn_get_number(void* state) {
+union grug_value game_fn_get_number(void* state, union grug_value* arguments) {
 	(void)(state);
+	(void)(arguments);
 	static size_t count = 0;
 	return (union grug_value){.number = (double)(count++)};
 }
@@ -97,7 +100,7 @@ union grug_value game_fn_sqrt(void* state, union grug_value* values) {
 	double value = values[0].number;
 	return (union grug_value){.number = sqrt(value)};
 }
-void game_fn_set_acc(void* state, union grug_value* values) {
+union grug_value game_fn_set_acc(void* state, union grug_value* values) {
 	(void)(state);
 	static size_t count = 0;
 
@@ -106,6 +109,7 @@ void game_fn_set_acc(void* state, union grug_value* values) {
 	double a_y = values[2].number;
 	particles[index].a_x = a_x;
 	particles[index].a_y = a_y;
+	return (union grug_value) {0};
 }
 /* Game functions */
 

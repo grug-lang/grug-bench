@@ -13,6 +13,8 @@ union grug_value {
 	uint64_t id;
 };
 
+typedef union grug_value (*game_fn_ptr)(void* state, const union grug_value[]);
+
 typedef void* (*create_grug_state_t)(const char* mod_api_path, const char* mods_dir);
 typedef void (*destroy_grug_state_t)(void* state);
 
