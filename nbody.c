@@ -11,7 +11,7 @@
 void sleepy(int32_t micro_seconds) {
 	Sleep(micro_seconds / 1000);
 }
-#elif defined(__linux__) /* end WIN32 */
+#elif defined(__linux__) || defined(__clang__)/* end WIN32 */
 #include <unistd.h>
 void sleepy(uint64_t micro_seconds) {
 	usleep(micro_seconds);

@@ -1,6 +1,7 @@
 #pragma once
 
 #include<stdint.h>
+#include<stdbool.h>
 
 enum grug_error_type {
 	stack_overflow = 0,
@@ -11,6 +12,7 @@ enum grug_error_type {
 union grug_value {
 	double number;
 	uint64_t id;
+	bool boolean;
 };
 
 typedef union grug_value (*game_fn_ptr)(void* state, const union grug_value[]);

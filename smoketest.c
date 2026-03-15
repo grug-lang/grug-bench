@@ -28,6 +28,7 @@ void* load_symbol(void* dll, const char* proc_name) {
 
 /* game functions */
 static game_fn_ptr game_fn_print_number = {0};
+static game_fn_ptr game_fn_print_bool   = {0};
 static game_fn_ptr game_fn_get_1        = {0};
 static game_fn_ptr game_fn_get_mass     = {0};
 static game_fn_ptr game_fn_get_number   = {0};
@@ -136,6 +137,16 @@ void on_tick(void* state, struct ParticleData* entity_data, union grug_value* va
 		{.number = a_y}
 	});
 }
+
+void on_is_even(void* state, void* data, union grug_value* values, size_t values_len) {
+	(void)(data);
+	(void)(values);
+	(void)(values_len);
+	assert(values_len == 1);
+	size_t input = (size_t)values[0].number;
+
+	game_fn_print_bool(state, &(union grug_value){.boolean = ((input % 2) == 0)});
+}
 /* on functions */
 
 /* vtable functions */
@@ -158,6 +169,8 @@ void* compile_grug_file(void* state, const char* file_path) {
 		return (void*)2;
 	} else if (strcmp(file_path, "bench/light-Particle.grug") == 0) {
 		return (void*)3;
+	} else if (strcmp(file_path, "bench/simple-Compile.grug") == 0) {
+		return (void*)4;
 	}
 	exit(2);
 }
@@ -176,6 +189,8 @@ void* create_entity(void* state, void* grug_script_id) {
 			.index = game_fn_get_number(state, NULL).number
 		};
 		return data;
+	} else if ((size_t)grug_script_id == 4) {
+		return NULL;
 	}
 	exit(2);
 }
@@ -208,6 +223,12 @@ void* get_on_fn_id(void* state, const char* entity_type, const char* function_na
 		} else {
 			return NULL;
 		}
+	} else if (strcmp(entity_type, "Compile") == 0) {
+		if (strcmp(function_name, "on_is_even") == 0) {
+			return (void*)on_is_even;
+		} else {
+			return NULL;
+		}
 	}
 	exit(2);
 }
@@ -226,16 +247,28 @@ int main () {
 		fprintf(stderr, "could not open dll\n");
 		exit(1);
 	}
-	p_grug_bench_run grug_bench_run = (__typeof__(p_grug_bench_run    ))load_symbol(dll, "grug_bench_run"      );
-	game_fn_print_number            = (__typeof__(game_fn_print_number))load_symbol(dll, "game_fn_print_number");
-	game_fn_get_1                   = (__typeof__(game_fn_get_1       ))load_symbol(dll, "game_fn_get_1"       );
-	game_fn_get_mass                = (__typeof__(game_fn_get_mass    ))load_symbol(dll, "game_fn_get_mass"  );
-	game_fn_get_number              = (__typeof__(game_fn_get_number  ))load_symbol(dll, "game_fn_get_number"  );
-	game_fn_x                       = (__typeof__(game_fn_x           ))load_symbol(dll, "game_fn_x"           );
-	game_fn_y                       = (__typeof__(game_fn_y           ))load_symbol(dll, "game_fn_y"           );
-	game_fn_sqrt                    = (__typeof__(game_fn_sqrt        ))load_symbol(dll, "game_fn_sqrt"        );
-	game_fn_set_acc                 = (__typeof__(game_fn_set_acc     ))load_symbol(dll, "game_fn_set_acc"       );
-	if (!(grug_bench_run && game_fn_print_number && game_fn_print_number)) {
+	p_grug_bench_run grug_bench_run = (p_grug_bench_run)load_symbol(dll, "grug_bench_run"      );
+	game_fn_print_number            = (game_fn_ptr)load_symbol(dll, "game_fn_print_number");
+	game_fn_print_bool              = (game_fn_ptr)load_symbol(dll, "game_fn_print_bool"  );
+	game_fn_get_1                   = (game_fn_ptr)load_symbol(dll, "game_fn_get_1"       );
+	game_fn_get_mass                = (game_fn_ptr)load_symbol(dll, "game_fn_get_mass"    );
+	game_fn_get_number              = (game_fn_ptr)load_symbol(dll, "game_fn_get_number"  );
+	game_fn_x                       = (game_fn_ptr)load_symbol(dll, "game_fn_x"           );
+	game_fn_y                       = (game_fn_ptr)load_symbol(dll, "game_fn_y"           );
+	game_fn_sqrt                    = (game_fn_ptr)load_symbol(dll, "game_fn_sqrt"        );
+	game_fn_set_acc                 = (game_fn_ptr)load_symbol(dll, "game_fn_set_acc"     );
+	if (!(grug_bench_run 
+		&& game_fn_print_number 
+		&& game_fn_print_number
+		&& game_fn_print_bool
+		&& game_fn_get_1     
+		&& game_fn_get_mass  
+		&& game_fn_get_number
+		&& game_fn_x         
+		&& game_fn_y         
+		&& game_fn_sqrt      
+		&& game_fn_set_acc   
+	)) {
 		fprintf(stderr, "could not load symbols\n");
 		return 1;
 	}

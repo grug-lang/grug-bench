@@ -5,7 +5,7 @@
 #include <time.h>
 #include "bench.h"
 
-#if defined(_WIN32)
+#if defined(WIN32)
 #include <windows.h>
 static uint64_t get_timestamp_frequency() {
 	uint64_t frequency = 0;
@@ -18,7 +18,7 @@ static uint64_t get_timestamp() {
 	QueryPerformanceCounter((LARGE_INTEGER*)&time_stamp);
 	return time_stamp;
 }
-#elif defined(__linux__) /* end WIN32 */
+#elif defined(__linux__) || defined(__clang__)/* end WIN32 */
 #define BIL(n) ((n) * 1000 * 1000 * 1000)
 static uint64_t get_timestamp_frequency() {
 	return BIL(1);
@@ -32,10 +32,17 @@ static uint64_t get_timestamp() {
 #endif /* linux */
 
 /* Game functions */
-static double print_value = 0;
+static double print_number_value = 0;
 union grug_value game_fn_print_number(void* state, union grug_value* arguments) {
 	(void)(state);
-	print_value = arguments[0].number;
+	print_number_value = arguments[0].number;
+	return (union grug_value) {0};
+}
+
+static bool print_bool_value = 0;
+union grug_value game_fn_print_bool(void* state, union grug_value* arguments) {
+	(void)(state);
+	print_bool_value = arguments[0].boolean;
 	return (union grug_value) {0};
 }
 
@@ -102,8 +109,6 @@ union grug_value game_fn_sqrt(void* state, union grug_value* values) {
 }
 union grug_value game_fn_set_acc(void* state, union grug_value* values) {
 	(void)(state);
-	static size_t count = 0;
-
 	size_t index = (size_t)values[0].number;
 	double a_x = values[1].number;
 	double a_y = values[2].number;
@@ -140,7 +145,7 @@ void run_on_function_test(
 	// run both
 	grug_state_vtable->call_entity_on_fn(state, entity, incr_fn_id, NULL, 0);
 	grug_state_vtable->call_entity_on_fn(state, entity, prnt_fn_id, NULL, 0);
-	assert(print_value == 1.0);
+	assert(print_number_value == 1.0);
 	assert(get_1_call_count == 1);
 
 	uint64_t start_time = get_timestamp();
@@ -153,7 +158,7 @@ void run_on_function_test(
 	uint64_t frequency = get_timestamp_frequency();
 
 	grug_state_vtable->call_entity_on_fn(state, entity, prnt_fn_id, NULL, 0);
-	assert(print_value == NUM_ITERATIONS + 1);
+	assert(print_number_value == NUM_ITERATIONS + 1);
 	assert(get_1_call_count == NUM_ITERATIONS + 1);
 
 	printf("time taken: %lf seconds\n", ((double)(end_time) - (double)(start_time)) / (double)(frequency));
@@ -204,7 +209,7 @@ void run_fibonacci_test(
 			}, 
 			1
 		);
-		assert(print_value == calc_fib((double)i) && "mismatched output");
+		assert(print_number_value == calc_fib((double)i) && "mismatched output");
 		uint64_t end = get_timestamp();
 		// if the calculation takes more than 10 ms
 		if (end - start > (frequency / 100)) {
@@ -377,6 +382,53 @@ void run_nbody_test(
 	particles_len = 0;
 }
 
+void compile_time_test(
+	void* state,
+	struct grug_state_vtable* grug_state_vtable
+) {
+	void* on_is_even_id = grug_state_vtable->get_on_fn_id(state, "Compile", "on_is_even");
+	
+	uint64_t frequency = get_timestamp_frequency();
+	uint64_t start = get_timestamp();
+
+	size_t number_of_compiles = 0;
+	
+	void* file = grug_state_vtable->compile_grug_file(state, "bench/simple-Compile.grug");
+
+	printf("Running compile time test\n");
+	fflush(stdout);
+
+	// Actual compile time
+	while ((get_timestamp() - start) < frequency) {
+		file = grug_state_vtable->compile_grug_file(state, "bench/simple-Compile.grug");
+		number_of_compiles++;
+	}
+
+	printf("Number of compiles completed: %zu\n", number_of_compiles);
+	fflush(stdout);
+
+	void* entity = grug_state_vtable->create_entity(state, file);
+	
+	// Make sure the results are correct
+	double values[] = {
+		2920,
+		3891,
+		3589,
+		1703,
+		3401,
+		2520,
+		3969,
+		1105,
+		2395,
+	};
+	for (size_t i = 0; i < sizeof(values) / sizeof(values[0]); i++) {
+		grug_state_vtable->call_entity_on_fn(state, entity, on_is_even_id, (union grug_value[]) {{.number = values[i]}}, 1);
+		assert(print_bool_value == (((size_t)values[i] % 2) == 0));
+	}
+	
+	grug_state_vtable->destroy_entity(state, entity);
+}
+
 void grug_bench_run(
 	const char* mod_api_path,
 	const char* mods_dir,
@@ -385,9 +437,11 @@ void grug_bench_run(
 ) {
 	void* state = grug_state_vtable->create_grug_state(mod_api_path, mods_dir);
 
+
 	run_on_function_test(state, grug_state_vtable);
 	run_fibonacci_test(state, grug_state_vtable);
 	run_nbody_test(state, grug_state_vtable, headless);
+	compile_time_test(state, grug_state_vtable);
 
 	grug_state_vtable->destroy_grug_state(state);
 	return;
