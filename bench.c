@@ -4,6 +4,7 @@
 #include <math.h>
 #include <time.h>
 #include "bench.h"
+#include <inttypes.h>
 
 #if defined(WIN32)
 #include <windows.h>
@@ -76,7 +77,7 @@ union grug_value game_fn_get_mass(void* state, union grug_value* values) {
 
 	size_t index = (size_t)values[0].number;
 	if (index > particles_len) {
-		printf("Particle index %zu out of bounds", index);
+		printf("Particle index %" PRIuPTR " out of bounds", index);
 		exit(1);
 	}
 	return (union grug_value){.number = particles[index].mass};
@@ -86,7 +87,7 @@ union grug_value game_fn_x(void* state, union grug_value* values) {
 
 	size_t index = (size_t)values[0].number;
 	if (index > particles_len) {
-		printf("Particle index %zu out of bounds", index);
+		printf("Particle index %" PRIuPTR " out of bounds", index);
 		exit(1);
 	}
 	return (union grug_value){.number = particles[index].x};
@@ -96,7 +97,7 @@ union grug_value game_fn_y(void* state, union grug_value* values) {
 
 	size_t index = (size_t)values[0].number;
 	if (index > particles_len) {
-		printf("Particle index %zu out of bounds", index);
+		printf("Particle index %" PRIuPTR " out of bounds", index);
 		exit(1);
 	}
 	return (union grug_value){.number = particles[index].y};
@@ -213,7 +214,7 @@ void run_fibonacci_test(
 		uint64_t end = get_timestamp();
 		// if the calculation takes more than 10 ms
 		if (end - start > (frequency / 100)) {
-			printf("Maximum fibonacci number calculated within 1 second: %zu\n", i);
+			printf("Maximum fibonacci number calculated within 1 second: %" PRIuPTR "\n", i);
 			break;
 		}
 	}
@@ -224,7 +225,7 @@ void run_fibonacci_test(
 #define WIDTH 70
 #define HEIGHT 70
 #define SCALE 10
-#define NUM_PARTICLES 100
+#define NUM_PARTICLES 1000
 #define COLOR_SCALE 0.05
 
 // Unicode blocks for density visualization
@@ -269,7 +270,7 @@ void render_frame(double grid_count[HEIGHT][WIDTH], double grid_speed[HEIGHT][WI
 	size_t remaining = buffer_size;
 	for (int y = 0; y < HEIGHT; y++) {
 		for (int x = 0; x < WIDTH; x++) {
-			char *block, *color;
+			const char *block, *color;
 			density_velocity_to_block_color(grid_count[y][x], grid_speed[y][x], &block, &color);
 			int wrote = snprintf(p, remaining, "%s%s\033[0m", color, block);
 			if (wrote < 0 || (size_t)wrote >= remaining) break;
@@ -328,7 +329,7 @@ void run_nbody_test(
 	uint64_t frequency = get_timestamp_frequency();
 	uint64_t start = get_timestamp();
 	// run for a maximum of 1 second
-	while ((get_timestamp() - start) < (frequency)) {
+	while ((get_timestamp() - start) < (frequency * 20)) {
 		// reset grid count
 		double grid_count[HEIGHT][WIDTH] = {0};
 		double grid_speed[HEIGHT][WIDTH] = {0};
@@ -350,8 +351,8 @@ void run_nbody_test(
 			particles[i].v_x += particles[i].a_x * 0.01;
 			particles[i].v_y += particles[i].a_y * 0.01;
 			
-			particles[i].v_x;
-			particles[i].v_y;
+			/* particles[i].v_x; */
+			/* particles[i].v_y; */
 
 			particles[i].x += particles[i].v_x;
 			particles[i].y += particles[i].v_y;
@@ -370,7 +371,7 @@ void run_nbody_test(
 		counter += 1;
 	}
 
-	printf("number of iterations completed: %zu\n", counter);
+	printf("number of iterations completed: %" PRIuPTR "\n", counter);
 
 	for (size_t i = 0; i < particles_len; i++) {
 		grug_state_vtable->destroy_entity(state, entities[i]);
@@ -404,7 +405,7 @@ void compile_time_test(
 		number_of_compiles++;
 	}
 
-	printf("Number of compiles completed: %zu\n", number_of_compiles);
+	printf("Number of compiles completed: %" PRIuPTR "\n", number_of_compiles);
 	fflush(stdout);
 
 	void* entity = grug_state_vtable->create_entity(state, file);

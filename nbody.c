@@ -1,6 +1,6 @@
 #include <math.h>
 #include <stdbool.h>
-#include <stdint.h>
+#include <inttypes.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -195,7 +195,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	if (headless) {
-		printf("%zu\n", ticks);
+		printf("%" PRIuPTR "\n", ticks);
 	}
 
 	if (!headless) free(buffer);
