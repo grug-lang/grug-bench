@@ -225,7 +225,7 @@ void run_fibonacci_test(
 #define WIDTH 70
 #define HEIGHT 70
 #define SCALE 10
-#define NUM_PARTICLES 1000
+#define NUM_PARTICLES 100
 #define COLOR_SCALE 0.05
 
 // Unicode blocks for density visualization
@@ -329,7 +329,7 @@ void run_nbody_test(
 	uint64_t frequency = get_timestamp_frequency();
 	uint64_t start = get_timestamp();
 	// run for a maximum of 1 second
-	while ((get_timestamp() - start) < (frequency * 20)) {
+	while ((get_timestamp() - start) < (frequency)) {
 		// reset grid count
 		double grid_count[HEIGHT][WIDTH] = {0};
 		double grid_speed[HEIGHT][WIDTH] = {0};
@@ -439,9 +439,9 @@ void grug_bench_run(
 	void* state = grug_state_vtable->create_grug_state(mod_api_path, mods_dir);
 
 
+	run_nbody_test(state, grug_state_vtable, headless);
 	run_on_function_test(state, grug_state_vtable);
 	run_fibonacci_test(state, grug_state_vtable);
-	run_nbody_test(state, grug_state_vtable, headless);
 	compile_time_test(state, grug_state_vtable);
 
 	grug_state_vtable->destroy_grug_state(state);
