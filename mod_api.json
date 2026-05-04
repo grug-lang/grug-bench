@@ -1,8 +1,9 @@
 {
 	"entities": {
 		"FibBench": {
-			"on_functions": {
-				"on_fib": {
+			"on_functions": [
+				{
+					"name": "on_fib",
 					"arguments": [
 						{
 							"name": "number",
@@ -10,21 +11,24 @@
 						}
 					]
 				}
-			}
+			]
 		},
 		"Bench": {
-			"on_functions": {
-				"on_print": {
+			"on_functions": [
+				{
+					"name": "on_print",
 					"arguments": [ ]
 				},
-				"on_increment": {
+				{
+					"name": "on_increment",
 					"arguments": [ ]
 				}
-			}
+			]
 		},
 		"Compile": {
-			"on_functions": {
-				"on_is_even": {
+			"on_functions": [
+				{
+					"name": "on_is_even",
 					"arguments": [
 						{
 							"type": "number",
@@ -32,11 +36,12 @@
 						}
 					]
 				}
-			}
+			]
 		},
 		"Particle": {
-			"on_functions": {
-				"on_set_velocity": {
+			"on_functions": [
+				{
+					"name": "on_set_velocity", 
 					"arguments": [
 						{
 							"name": "lv_x",
@@ -48,7 +53,8 @@
 						}
 					]
 				},
-				"on_tick": {
+				{
+					"name": "on_tick",
 					"arguments": [
 						{
 							"name": "n",
@@ -56,7 +62,7 @@
 						}
 					]
 				}
-			}
+			]
 		}
 	},
 	"game_functions": {
