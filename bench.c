@@ -41,28 +41,32 @@ union grug_value game_fn_fmod(void* state, union grug_value* arguments) {
 }
 
 static double print_number_value = 0;
-union grug_value game_fn_print_number(void* state, union grug_value* arguments) {
+union grug_value game_fn_print_number(void* data, void* state, union grug_value* arguments) {
+	(void)(data);
 	(void)(state);
 	print_number_value = arguments[0].number;
 	return (union grug_value) {0};
 }
 
 static bool print_bool_value = 0;
-union grug_value game_fn_print_bool(void* state, union grug_value* arguments) {
+union grug_value game_fn_print_bool(void* data, void* state, union grug_value* arguments) {
+	(void)(data);
 	(void)(state);
 	print_bool_value = arguments[0].boolean;
 	return (union grug_value) {0};
 }
 
 static double get_1_call_count = 0;
-union grug_value game_fn_get_1(void* state, union grug_value* arguments) {
+union grug_value game_fn_get_1(void* data, void* state, union grug_value* arguments) {
+	(void)(data);
 	(void)(state);
 	(void)(arguments);
 	get_1_call_count++;
 	return (union grug_value) {.number = 1.};
 }
 
-union grug_value game_fn_get_number(void* state, union grug_value* arguments) {
+union grug_value game_fn_get_number(void* data, void* state, union grug_value* arguments) {
+	(void)(data);
 	(void)(state);
 	(void)(arguments);
 	static size_t count = 0;
@@ -79,7 +83,8 @@ struct ParticleData {
 static struct ParticleData* particles     = NULL;
 static size_t               particles_len = 0   ;
 
-union grug_value game_fn_get_mass(void* state, union grug_value* values) {
+union grug_value game_fn_get_mass(void* data, void* state, union grug_value* values) {
+	(void)(data);
 	(void)(state);
 
 	size_t index = (size_t)values[0].number;
@@ -89,7 +94,8 @@ union grug_value game_fn_get_mass(void* state, union grug_value* values) {
 	}
 	return (union grug_value){.number = particles[index].mass};
 }
-union grug_value game_fn_x(void* state, union grug_value* values) {
+union grug_value game_fn_x(void* data, void* state, union grug_value* values) {
+	(void)(data);
 	(void)(state);
 
 	size_t index = (size_t)values[0].number;
@@ -99,7 +105,8 @@ union grug_value game_fn_x(void* state, union grug_value* values) {
 	}
 	return (union grug_value){.number = particles[index].x};
 }
-union grug_value game_fn_y(void* state, union grug_value* values) {
+union grug_value game_fn_y(void* data, void* state, union grug_value* values) {
+	(void)(data);
 	(void)(state);
 
 	size_t index = (size_t)values[0].number;
@@ -109,13 +116,15 @@ union grug_value game_fn_y(void* state, union grug_value* values) {
 	}
 	return (union grug_value){.number = particles[index].y};
 }
-union grug_value game_fn_sqrt(void* state, union grug_value* values) {
+union grug_value game_fn_sqrt(void* data, void* state, union grug_value* values) {
+	(void)(data);
 	(void)(state);
 
 	double value = values[0].number;
 	return (union grug_value){.number = sqrt(value)};
 }
-union grug_value game_fn_set_acc(void* state, union grug_value* values) {
+union grug_value game_fn_set_acc(void* data, void* state, union grug_value* values) {
+	(void)(data);
 	(void)(state);
 	size_t index = (size_t)values[0].number;
 	double a_x = values[1].number;
