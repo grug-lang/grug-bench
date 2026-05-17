@@ -1,9 +1,9 @@
 {
 	"entities": {
 		"FibBench": {
-			"on_functions": [
+			"export_functions": [
 				{
-					"name": "on_fib",
+					"name": "fib",
 					"arguments": [
 						{
 							"name": "number",
@@ -14,21 +14,21 @@
 			]
 		},
 		"Bench": {
-			"on_functions": [
+			"export_functions": [
 				{
-					"name": "on_print",
+					"name": "print",
 					"arguments": [ ]
 				},
 				{
-					"name": "on_increment",
+					"name": "increment",
 					"arguments": [ ]
 				}
 			]
 		},
 		"Compile": {
-			"on_functions": [
+			"export_functions": [
 				{
-					"name": "on_is_even",
+					"name": "is_even",
 					"arguments": [
 						{
 							"type": "number",
@@ -39,9 +39,9 @@
 			]
 		},
 		"Particle": {
-			"on_functions": [
+			"export_functions": [
 				{
-					"name": "on_set_velocity", 
+					"name": "set_velocity", 
 					"arguments": [
 						{
 							"name": "lv_x",
@@ -54,7 +54,7 @@
 					]
 				},
 				{
-					"name": "on_tick",
+					"name": "tick",
 					"arguments": [
 						{
 							"name": "n",
@@ -65,7 +65,7 @@
 			]
 		}
 	},
-	"game_functions": {
+	"host_functions": {
 		"fmod": {
 			"return_type": "number",
 			"arguments": [

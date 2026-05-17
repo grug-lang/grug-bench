@@ -141,8 +141,8 @@ void run_on_function_test(
 	void* state,
 	struct grug_state_vtable* grug_state_vtable
 ) {
-	void* prnt_fn_id = grug_state_vtable->get_on_fn_id(state, "Bench", "on_print");
-	void* incr_fn_id = grug_state_vtable->get_on_fn_id(state, "Bench", "on_increment");
+	void* prnt_fn_id = grug_state_vtable->get_on_fn_id(state, "Bench", "print");
+	void* incr_fn_id = grug_state_vtable->get_on_fn_id(state, "Bench", "increment");
 
 	void* file = grug_state_vtable->compile_grug_file(state, "bench/basic-Bench.grug");
 	void* entity = grug_state_vtable->create_entity(state, file);
@@ -196,7 +196,7 @@ void run_fibonacci_test(
 	void* state,
 	struct grug_state_vtable* grug_state_vtable
 ) {
-	void* on_fib_id = grug_state_vtable->get_on_fn_id(state, "FibBench", "on_fib");
+	void* on_fib_id = grug_state_vtable->get_on_fn_id(state, "FibBench", "fib");
 
 	void* file = grug_state_vtable->compile_grug_file(state, "bench/fib-FibBench.grug");
 	void* entity = grug_state_vtable->create_entity(state, file);
@@ -299,7 +299,7 @@ void run_nbody_test(
 	_Bool headless
 ) {
 	srand((unsigned)time(NULL));
-	void* on_tick_id = grug_state_vtable->get_on_fn_id(state, "Particle", "on_tick");
+	void* on_tick_id = grug_state_vtable->get_on_fn_id(state, "Particle", "tick");
 
 	void* file = grug_state_vtable->compile_grug_file(state, "bench/light-Particle.grug");
 
@@ -394,7 +394,7 @@ void compile_time_test(
 	void* state,
 	struct grug_state_vtable* grug_state_vtable
 ) {
-	void* on_is_even_id = grug_state_vtable->get_on_fn_id(state, "Compile", "on_is_even");
+	void* on_is_even_id = grug_state_vtable->get_on_fn_id(state, "Compile", "is_even");
 	
 	uint64_t frequency = get_timestamp_frequency();
 	uint64_t start = get_timestamp();

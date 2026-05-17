@@ -4,7 +4,7 @@ scale: number = 5
 
 my_index: number = get_number()
 
-on_tick(n: number) {
+export tick(n: number) {
     my_mass: number = get_mass(my_index)
 
     x_i: number = x(my_index)

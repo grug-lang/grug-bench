@@ -1,4 +1,4 @@
-on_is_even(input: number) {
+export is_even(input: number) {
     result: bool = false
     if input == 0 {
         result = true
