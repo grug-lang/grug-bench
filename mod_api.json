@@ -66,6 +66,19 @@
 		}
 	},
 	"game_functions": {
+		"fmod": {
+			"return_type": "number",
+			"arguments": [
+				{
+					"name": "a",
+					"type": "number"
+				},
+				{
+					"name": "b",
+					"type": "number"
+				}
+			]
+		},
 		"print_number": {
 			"arguments": [
 				{

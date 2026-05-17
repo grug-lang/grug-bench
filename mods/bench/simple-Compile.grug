@@ -16389,7 +16389,7 @@ on_is_even(input: number) {
     } else if input == 8193 {
         result = false
     } else {
-        result = (input % 2) == 0
+        result = fmod(input, 2) == 0
     }
     print_bool(result)
 }

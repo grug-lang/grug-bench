@@ -33,6 +33,13 @@ static uint64_t get_timestamp() {
 #endif /* linux */
 
 /* Game functions */
+union grug_value game_fn_fmod(void* state, union grug_value* arguments) {
+	(void)(state);
+	double a = arguments[0].number;
+	double b = arguments[1].number;
+	return (union grug_value) {.number = fmod(a, b)};
+}
+
 static double print_number_value = 0;
 union grug_value game_fn_print_number(void* state, union grug_value* arguments) {
 	(void)(state);
@@ -151,7 +158,7 @@ void run_on_function_test(
 
 	uint64_t start_time = get_timestamp();
 	// run 1B times; 
-	#define NUM_ITERATIONS 1000 * 1000 * 1
+	#define NUM_ITERATIONS 1000 * 10 * 1
 	for (size_t i = 0; i < NUM_ITERATIONS; i++) {
 		grug_state_vtable->call_entity_on_fn(state, entity, incr_fn_id, NULL, 0);
 	}
@@ -437,7 +444,6 @@ void grug_bench_run(
 	_Bool headless
 ) {
 	void* state = grug_state_vtable->create_grug_state(mod_api_path, mods_dir);
-
 
 	run_nbody_test(state, grug_state_vtable, headless);
 	run_on_function_test(state, grug_state_vtable);
