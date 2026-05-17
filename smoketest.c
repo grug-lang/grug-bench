@@ -204,30 +204,30 @@ void* get_on_fn_id(void* state, const char* entity_type, const char* function_na
 	(void)(state);
 	(void)(entity_type);
 	if (strcmp(entity_type, "Bench") == 0) {
-		if (strcmp(function_name, "on_print") == 0) {
+		if (strcmp(function_name, "print") == 0) {
 			return (void*)on_print;
-		} else if (strcmp(function_name, "on_increment") == 0) {
+		} else if (strcmp(function_name, "increment") == 0) {
 			return (void*)on_increment;
 		} else {
-			return NULL;
+			exit(2);
 		}
 	} else if (strcmp(entity_type, "FibBench") == 0) {
-		if (strcmp(function_name, "on_fib") == 0) {
+		if (strcmp(function_name, "fib") == 0) {
 			return (void*)on_fib;
 		} else {
-			return NULL;
+			exit(2);
 		}
 	} else if (strcmp(entity_type, "Particle") == 0) {
-		if (strcmp(function_name, "on_tick") == 0) {
+		if (strcmp(function_name, "tick") == 0) {
 			return (void*)on_tick;
 		} else {
-			return NULL;
+			exit(2);
 		}
 	} else if (strcmp(entity_type, "Compile") == 0) {
-		if (strcmp(function_name, "on_is_even") == 0) {
+		if (strcmp(function_name, "is_even") == 0) {
 			return (void*)on_is_even;
 		} else {
-			return NULL;
+			exit(2);
 		}
 	}
 	exit(2);
