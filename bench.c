@@ -33,7 +33,8 @@ static uint64_t get_timestamp() {
 #endif /* linux */
 
 /* Game functions */
-union grug_value game_fn_fmod(void* state, union grug_value* arguments) {
+union grug_value game_fn_fmod(void* data, void* state, union grug_value* arguments) {
+	(void)(data);
 	(void)(state);
 	double a = arguments[0].number;
 	double b = arguments[1].number;
