@@ -4,7 +4,7 @@
 			"export_functions": [
 				{
 					"name": "fib",
-					"arguments": [
+					"parameters": [
 						{
 							"name": "number",
 							"type": "number"
@@ -17,11 +17,11 @@
 			"export_functions": [
 				{
 					"name": "print",
-					"arguments": [ ]
+					"parameters": [ ]
 				},
 				{
 					"name": "increment",
-					"arguments": [ ]
+					"parameters": [ ]
 				}
 			]
 		},
@@ -29,7 +29,7 @@
 			"export_functions": [
 				{
 					"name": "is_even",
-					"arguments": [
+					"parameters": [
 						{
 							"type": "number",
 							"name": "input"
@@ -42,7 +42,7 @@
 			"export_functions": [
 				{
 					"name": "set_velocity", 
-					"arguments": [
+					"parameters": [
 						{
 							"name": "lv_x",
 							"type": "number"
@@ -55,7 +55,7 @@
 				},
 				{
 					"name": "tick",
-					"arguments": [
+					"parameters": [
 						{
 							"name": "n",
 							"type": "number"
@@ -65,10 +65,11 @@
 			]
 		}
 	},
+	"classes": {},
 	"host_functions": {
 		"fmod": {
 			"return_type": "number",
-			"arguments": [
+			"parameters": [
 				{
 					"name": "a",
 					"type": "number"
@@ -80,7 +81,7 @@
 			]
 		},
 		"print_number": {
-			"arguments": [
+			"parameters": [
 				{
 					"name": "i",
 					"type": "number"
@@ -88,7 +89,7 @@
 			]
 		},
 		"print_bool": {
-			"arguments": [
+			"parameters": [
 				{
 					"name": "value",
 					"type": "bool"
@@ -97,15 +98,15 @@
 		},
 		"get_1": {
 			"return_type": "number",
-			"arguments": [ ]
+			"parameters": [ ]
 		},
 		"get_number": {
 			"return_type": "number",
-			"arguments": [ ]
+			"parameters": [ ]
 		},
 		"get_mass": {
 			"return_type": "number",
-			"arguments": [
+			"parameters": [
 				{
 					"name": "particle_index",
 					"type": "number"
@@ -114,7 +115,7 @@
 		},
 		"x": {
 			"return_type": "number",
-			"arguments": [
+			"parameters": [
 				{
 					"name": "particle_index",
 					"type": "number"
@@ -123,7 +124,7 @@
 		},
 		"y": {
 			"return_type": "number",
-			"arguments": [
+			"parameters": [
 				{
 					"name": "particle_index",
 					"type": "number"
@@ -131,7 +132,7 @@
 			]
 		},
 		"set_acc": {
-			"arguments": [
+			"parameters": [
 				{
 					"name": "particle_index",
 					"type": "number"
@@ -148,7 +149,7 @@
 		},
 		"sqrt": {
 			"return_type": "number",
-			"arguments": [
+			"parameters": [
 				{
 					"name": "input",
 					"type": "number"
