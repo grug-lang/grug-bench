@@ -1,64 +1,84 @@
 {
 	"entities": {
 		"FibBench": {
+			"description": "Fibonacci number calculation benchmarks",
 			"export_functions": [
 				{
+					"description": "calculates the nth fibonacci number",
 					"name": "fib",
 					"parameters": [
 						{
 							"name": "number",
-							"type": "number"
+							"type": {
+								"name": "number"
+							}
 						}
 					]
 				}
 			]
 		},
 		"Bench": {
+			"description": "benchmarks calling a simple export function",
 			"export_functions": [
 				{
+					"description": "a simple function that calls the print_number host function",
 					"name": "print",
 					"parameters": [ ]
 				},
 				{
+					"description": "increments a member integer value",
 					"name": "increment",
 					"parameters": [ ]
 				}
 			]
 		},
 		"Compile": {
+			"description": "compile time test benchmark",
 			"export_functions": [
 				{
+					"description": "returns if a number is even or false",
 					"name": "is_even",
 					"parameters": [
 						{
-							"type": "number",
-							"name": "input"
+							"name": "input",
+							"type": {
+								"name": "number"
+							}
 						}
 					]
 				}
 			]
 		},
 		"Particle": {
+			"description": "a single particle in a n body simulation",
 			"export_functions": [
 				{
+					"description": "set the local velocity to the input values",
 					"name": "set_velocity", 
 					"parameters": [
 						{
 							"name": "lv_x",
-							"type": "number"
+							"type": {
+								"name": "number"
+							}
 						},
 						{
 							"name": "lv_y",
-							"type": "number"
+							"type": {
+								"name": "number"
+							}
 						}
 					]
 				},
 				{
+					"description": "update the location of the particle",
 					"name": "tick",
 					"parameters": [
 						{
 							"name": "n",
-							"type": "number"
+							"type": {
+								"name": "number"
+							}
 						}
 					]
 				}
@@ -68,91 +88,137 @@
 	"classes": {},
 	"host_functions": {
 		"fmod": {
-			"return_type": "number",
+			"description": "floating point modulus",
+			"return_type": {
+				"name": "number"
+			},
 			"parameters": [
 				{
 					"name": "a",
-					"type": "number"
+					"type": {
+						"name": "number"
+					}
 				},
 				{
 					"name": "b",
-					"type": "number"
+					"type": {
+						"name": "number"
+					}
 				}
 			]
 		},
 		"print_number": {
+			"description": "send a number from the entity to the host",
 			"parameters": [
 				{
 					"name": "i",
-					"type": "number"
+					"type": {
+						"name": "number"
+					}
 				}
 			]
 		},
 		"print_bool": {
+			"description": "send a bool from the entity to the host",
 			"parameters": [
 				{
 					"name": "value",
-					"type": "bool"
+					"type": {
+						"name": "bool"
+					}
 				}
 			]
 		},
 		"get_1": {
-			"return_type": "number",
+			"description": "returns 1",
+			"return_type": {
+				"name": "number"
+			},
 			"parameters": [ ]
 		},
 		"get_number": {
-			"return_type": "number",
+			"description": "gets a number from the host",
+			"return_type": {
+				"name": "number"
+			},
 			"parameters": [ ]
 		},
 		"get_mass": {
-			"return_type": "number",
+			"description": "gets the mass of the current entity from the host",
+			"return_type": {
+				"name": "number"
+			},
 			"parameters": [
 				{
 					"name": "particle_index",
-					"type": "number"
+					"type": {
+						"name": "number"
+					}
 				}
 			]
 		},
 		"x": {
-			"return_type": "number",
+			"description": "gets the x coordinate of the current entity from the host",
+			"return_type": {
+				"name": "number"
+			},
 			"parameters": [
 				{
 					"name": "particle_index",
-					"type": "number"
+					"type": {
+						"name": "number"
+					}
 				}
 			]
 		},
 		"y": {
-			"return_type": "number",
+			"description": "gets the y coordinate of the current entity from the host",
+			"return_type": {
+				"name": "number"
+			},
 			"parameters": [
 				{
 					"name": "particle_index",
-					"type": "number"
+					"type": {
+						"name": "number"
+					}
 				}
 			]
 		},
 		"set_acc": {
+			"description": "set the acceleration of the current particle",
 			"parameters": [
 				{
 					"name": "particle_index",
-					"type": "number"
+					"type": {
+						"name": "number"
+					}
 				},
 				{
 					"name": "a_x",
-					"type": "number"
+					"type": {
+						"name": "number"
+					}
 				},
 				{
 					"name": "a_y",
-					"type": "number"
+					"type": {
+						"name": "number"
+					}
 				}
 			]
 		},
 		"sqrt": {
-			"return_type": "number",
+			"description": "returns the square root of the number",
+			"return_type": {
+				"name": "number"
+			},
 			"parameters": [
 				{
 					"name": "input",
-					"type": "number"
+					"type": {
+						"name": "number"
+					}
 				}
 			]
 		}
